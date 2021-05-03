@@ -1,0 +1,21 @@
+--Earth_Second
+Georgi Earth_Second 6 57 blue 85.27
+Peshko_Beibe Earth_Second 5 19 blue 85.27
+--Mars
+Ango_Bango Mars 2 18 red 59.12
+--Jupiter_ohohoh
+--Mercury_wowoow
+Gosho Mercury_wowoow 1 8 purple 12.45
+
+
+
+
+
+
+
+
+
+
+
+
+
