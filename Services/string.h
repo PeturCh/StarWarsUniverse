@@ -27,6 +27,7 @@ class String
     String& operator=(const char *);
     String& operator=(const String&);
     const bool operator==(const String&);
+    //const bool operator==(const char*);
     ~String();
 
     const bool isEmpty() const;

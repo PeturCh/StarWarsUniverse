@@ -28,10 +28,20 @@ class Jedi
     Jedi(const String &_name, const Rang &_rang, const usi &_age, const String &_saberColour, const double &_power, const String &_planetName)
     {
         name = _name;
-        rang = _rang;
+
+        if(_rang > 8)
+            rang = (Rang)8;
+        else if(_rang < 1)
+            rang = (Rang)1;
+        else rang = _rang;
+
         age = _age;
         saberColour = _saberColour;
-        power = _power;
+        
+        if(_power < 0)
+            power = 0;
+        else power = _power;
+
         planetName = _planetName;
     }
 

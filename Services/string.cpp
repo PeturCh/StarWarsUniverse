@@ -142,6 +142,27 @@ const bool String::operator==(const String& other)
     return true;
 }
 
+//const bool String::operator==(const char* other)
+//{
+//    usi length = 0;
+//    for (size_t i = 0; other[i] != '\0'; i++)
+//    {
+//        length++;
+//    }
+//    
+//    if(length != this->getLength())
+//        return false;
+//
+//    for (size_t i = 0; i < getLength(); i++)
+//    {
+//        if (data[i] != other[i])
+//        {
+//            return false;
+//        }
+//    }
+//    return true;
+//}
+
 String::~String()
 {
     destroy();   
