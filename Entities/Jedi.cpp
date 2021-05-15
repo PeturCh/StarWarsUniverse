@@ -23,7 +23,15 @@ class Jedi
 
     public:
 
-    Jedi() {}
+    Jedi() 
+    {
+        name = "None";
+        rang = (Rang)1;
+        age = 50000;
+        saberColour = "transperant";
+        power = 0;
+        planetName = "None";
+    }
     
     Jedi(const String &_name, const Rang &_rang, const usi &_age, const String &_saberColour, const double &_power, const String &_planetName)
     {
@@ -53,6 +61,46 @@ class Jedi
         saberColour = other.saberColour;
         power = other.power;
         planetName = other.planetName;
+    }
+
+    double getPower()
+    {
+        return power;
+    }
+
+    usi getAge()
+    {
+        return age;
+    }
+
+    char* getName()
+    {
+        char* nameArr = new char[name.getLength() + 1];
+        for (size_t i = 0; i < name.getLength(); i++)
+        {
+            nameArr[i] = name[i];
+        }
+        return nameArr;
+    }
+
+    usi getRank()
+    {
+        return rang;
+    }
+
+    char* getSaberColour()
+    {
+        char* saber = new char[saberColour.getLength() + 1];
+        for (size_t i = 0; i < saberColour.getLength(); i++)
+        {
+            saber[i] = saberColour[i];
+        }
+        return saber;
+    }
+
+    String getSaberColour2()
+    {
+        return saberColour;
     }
 
     Jedi& operator=(const Jedi &other)

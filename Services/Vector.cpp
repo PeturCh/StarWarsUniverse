@@ -130,6 +130,8 @@ public:
 
     void pop_back()
     {
+        T *toDelete = data[size - 1];
+        delete toDelete;
         size--;
     }
 };

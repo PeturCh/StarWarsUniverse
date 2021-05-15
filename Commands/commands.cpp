@@ -1,7 +1,9 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include "..\Services\string.cpp"
+#include "..\Services\Dictionary.cpp"
 #include "..\Entities\Jedi.cpp"
 #include <filesystem>
 
@@ -12,6 +14,43 @@ String normalizeName(String name)
             name[i] = '_';
 
     return name;    
+}
+
+Vector<Jedi> getJediFromPlanet(String planetName)
+{
+    String normalizedName = normalizeName(planetName);
+    std::ifstream input("..\\Data\\new.txt");
+    Vector<Jedi> jediFromPlanet;
+    char buffer[150];
+    char first[50];
+    while(!input.eof())
+    {
+        input >> first;
+        if(first[0] == '-')
+        {
+            if(normalizedName == first + 2)
+            {
+                char nameFF[50], planetFF[50], colourFF[20];
+                usi rangFF, ageFF;
+                double powerFF;
+                while(true)
+                {
+                    input >> nameFF >> planetFF >> rangFF >> ageFF >> colourFF >> powerFF;
+                    if(nameFF[0] != '-')
+                    {
+                        Jedi j(nameFF, (Rang)rangFF, ageFF, colourFF, powerFF, planetFF);
+                        jediFromPlanet.push_back(j);
+                    }
+                    else break;
+                }
+                break;
+            }
+            continue;
+        }
+        else input.getline(buffer, 150, '\n');
+    }
+    input.close();
+    return jediFromPlanet;
 }
 
 bool jediExists(String jediName, String planetName = "")
@@ -293,6 +332,83 @@ void demote_jedi(String jediName, double multipl)
     }
 
 }
+
+Jedi get_strongest_jedi(String planetName)
+{
+    Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);
+    Jedi strongest;
+    for (usi i = 0; i < jediFromPlanet.getSize(); i++)
+    {
+        if(jediFromPlanet[i].getPower() > strongest.getPower())
+            strongest = jediFromPlanet[i];
+    }
+    return strongest;
+}
+
+Jedi get_youngest_jedi(String planetName, usi rank)
+{
+    Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);    
+
+    Jedi youngest;
+    for (usi i = 0; i < jediFromPlanet.getSize(); i++)
+    {
+        if(jediFromPlanet[i].getAge() <= youngest.getAge() && jediFromPlanet[i].getRank() == rank)
+        {
+            if (jediFromPlanet[i].getAge() == youngest.getAge())
+            {
+                if(strcmp(jediFromPlanet[i].getName(), youngest.getName()) < 0)
+                    youngest = jediFromPlanet[i];
+                continue;
+            }
+            youngest = jediFromPlanet[i];
+        }
+    }
+    return youngest;
+}
+
+String get_most_used_saber_color(String planetName, usi rank)
+{
+    Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);    
+
+    Vector<DictionaryPair<String,usi>> colours;
+
+    bool containsColour = false;
+
+    for (usi i = 0; i < jediFromPlanet.getSize(); i++)
+    {
+
+        if(jediFromPlanet[i].getRank() == rank)
+        {
+            for (usi j = 0; j < colours.getSize(); j++)
+            {
+                if(jediFromPlanet[i].getSaberColour2() == colours[j].getKey())
+                {
+                    colours[j].setValue(colours[j].getValue() + 1);
+                    containsColour = true;
+                }
+            }
+            if (!containsColour)
+            {
+                colours.push_back(DictionaryPair<String, usi>(jediFromPlanet[i].getSaberColour2(), 1));
+            }
+        }
+        containsColour = false;
+    }
+
+    usi mostOccurrences = 0;
+    String mostUsedColour;
+    for (usi i = 0; i < colours.getSize(); i++)
+    {   
+        if(colours[i].getValue() > mostOccurrences)
+        {
+            mostUsedColour = colours[i].getKey();
+            mostOccurrences = colours[i].getValue();
+        }
+    }
+    
+    return mostUsedColour;
+}
+
 int main()
 {
     //add_planet("Earth Second");
@@ -308,7 +424,15 @@ int main()
     //create_jedi("Jupiter ohohoh", "Angelcho", (Rang)4, 24, "bluee", 87.75);
     //create_jedi("Mercury wowoow", "Gosho", (Rang)1, 8, "purple", 12.45);
 
-    promote_jedi("Georgi", 1.77);
+    //promote_jedi("Georgi", 1.77);
 
+    //Jedi jj = get_strongest_jedi("Jupiter o");
+    //std::cout<<jj << '\n';
+
+    //Jedi j(get_youngest_jedi("Jupiter o", 3));
+    //std::cout << j<< '\n';
+
+    //std::cout << get_most_used_saber_color("Jupiter o", 3);
+    
 }
 
