@@ -369,14 +369,11 @@ Jedi get_youngest_jedi(String planetName, usi rank)
 String get_most_used_saber_color(String planetName, usi rank)
 {
     Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);    
-
     Vector<DictionaryPair<String,usi>> colours;
-
     bool containsColour = false;
 
     for (usi i = 0; i < jediFromPlanet.getSize(); i++)
     {
-
         if(jediFromPlanet[i].getRank() == rank)
         {
             for (usi j = 0; j < colours.getSize(); j++)
@@ -409,6 +406,82 @@ String get_most_used_saber_color(String planetName, usi rank)
     return mostUsedColour;
 }
 
+String get_most_used_saber_color(String planetName)
+{
+    std::ifstream input("..\\Data\\new.txt");
+    
+    Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);
+
+    Vector<DictionaryPair<String, usi>> colours;
+    bool containsColour = false;
+
+    for(usi i = 0; i < jediFromPlanet.getSize(); i++)
+    {  
+        for (usi j = 0; j < colours.getSize(); j++)
+        {
+            if(jediFromPlanet[i].getSaberColour2() == colours[j].getKey())
+            {
+                if(jediFromPlanet[i].getRank() == 8)
+                    colours[j].setGMColour();
+                colours[j].setValue(colours[j].getValue() + 1);
+                containsColour = true;
+            }
+        }
+        if (!containsColour)
+        {
+            if(jediFromPlanet[i].getRank() == 8)
+                colours.push_back(DictionaryPair<String, usi>(jediFromPlanet[i].getSaberColour2(), 1, true));
+
+            else colours.push_back(DictionaryPair<String, usi>(jediFromPlanet[i].getSaberColour2(), 1));
+        }
+        containsColour = false;
+    }
+
+    usi mostOccurrences = 0;
+    String mostUsedColour;
+
+    for (usi i = 0; i < colours.getSize(); i++)
+    {
+        if(!colours[i].isGMColour())
+            continue;
+        
+        if(colours[i].getValue() > mostOccurrences)
+        {
+            mostUsedColour = colours[i].getKey();
+            mostOccurrences = colours[i].getValue();
+        }
+    }
+
+    return mostUsedColour;
+}
+
+void print(String planetName)
+{
+    Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);
+
+    for(usi i = 0; i < jediFromPlanet.getSize(); i++)
+        for (size_t j = i; j < jediFromPlanet.getSize(); j++)
+            if(jediFromPlanet[i].getRank() > jediFromPlanet[j].getRank())
+            {
+                Jedi temp(jediFromPlanet[i]);
+                jediFromPlanet[i] = jediFromPlanet[j];
+                jediFromPlanet[j] = temp;
+            }
+    
+    for (usi i = 0; i < jediFromPlanet.getSize(); i++)
+        for (size_t j = i; j < jediFromPlanet.getSize(); j++)
+            if(jediFromPlanet[i].getRank() == jediFromPlanet[j].getRank()) //only if the rank is the same
+                if(std::strcmp(jediFromPlanet[i].getName(), jediFromPlanet[j].getName()) > 0) //only if the first jedi has alphabetically higher value
+                {
+                    Jedi temp(jediFromPlanet[i]);
+                    jediFromPlanet[i] = jediFromPlanet[j];
+                    jediFromPlanet[j] = temp;
+                }
+
+    for (size_t i = 0; i < jediFromPlanet.getSize(); i++)
+        std::cout << jediFromPlanet[i];
+}
+
 int main()
 {
     //add_planet("Earth Second");
@@ -433,6 +506,10 @@ int main()
     //std::cout << j<< '\n';
 
     //std::cout << get_most_used_saber_color("Jupiter o", 3);
-    
+
+    //std::cout << get_most_used_saber_color("Earth Second");
+
+    //print("Earth Second");
+ 
 }
 

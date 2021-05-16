@@ -1,15 +1,22 @@
 --Earth_Second
 Georgi Earth_Second 8 57 blue 1255.4
+Georgo Earth_Second 8 57 blue 1255.4
 Peshko_Beibe Earth_Second 1 19 yellow 5.29
 Ango_Ochite Earth_Second 5 24 yellow 99.71
+Ango_Ochiti Earth_Second 5 24 yellow 99.71
 --Mars
 Ango_Bango Mars 2 18 red 59.12
 --Jupiter_o
-Vesko Jupiter_o 3 21 green 88.50
-Angelchu Jupiter_o 3 19 blue 87.75
-Georgii Jupiter_o 8 57 red 1255.4
-Angelcho Jupiter_o 3 19 red 99.71
+Vesko Jupiter_o 8 21 green 88.50
+Angelchu Jupiter_o 2 19 green 87.75
+Georgii Jupiter_o 1 57 green 1255.4
+Angelchu Jupiter_o 5 19 green 87.75
+Angelss Jupiter_o 7 19 blue 87.75
+Angshu Jupiter_o 8 19 blue 87.75
+Angelcho Jupiter_o 6 19 red 99.71
 Peshko_Beibee Jupiter_o 8 25 red 5.29
+Delchu Jupiter_o 8 19 yellow 87.75
 Angelcha Jupiter_o 3 19 red 99.99
+Pgelchu Jupiter_o 4 19 blue 87.75
 --Mercury_w
 Gosho Mercury_w 1 8 purple 12.45
