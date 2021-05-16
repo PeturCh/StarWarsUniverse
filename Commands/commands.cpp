@@ -2,10 +2,10 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <filesystem>
 #include "..\Services\string.cpp"
 #include "..\Services\Dictionary.cpp"
 #include "..\Entities\Jedi.cpp"
-#include <filesystem>
 
 String normalizeName(String name)
 {
@@ -455,7 +455,7 @@ String get_most_used_saber_color(String planetName)
     return mostUsedColour;
 }
 
-void print(String planetName)
+void printPlanet(String planetName)
 {
     Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);
 
@@ -480,6 +480,79 @@ void print(String planetName)
 
     for (size_t i = 0; i < jediFromPlanet.getSize(); i++)
         std::cout << jediFromPlanet[i];
+}
+
+void printJedi(String jediName)
+{
+    String jediNameNormalized = normalizeName(jediName);
+
+    char nameFF[100];
+    char buffer[200];
+
+    std::ifstream input("..\\Data\\new.txt");
+
+    while(!input.eof())
+    {   
+        input >> nameFF;
+
+        if(input.eof())
+            break;
+
+        if (nameFF[0] == '-')
+        {
+            continue;
+        }
+
+        if (jediNameNormalized == nameFF)
+        {
+            char planetFF[50], colourFF[20];
+            usi rangFF, ageFF;
+            double powerFF;
+            input >> planetFF >> rangFF >> ageFF >> colourFF >> powerFF;
+            Jedi j(nameFF, (Rang)rangFF, ageFF, colourFF, powerFF, planetFF);
+            std::cout << nameFF << " from planet " << planetFF << ", with rank " << (Rang)rangFF << ", aged " << ageFF << ", saber colour " << colourFF << ", power " << powerFF << "." <<'\n';
+            input.close();
+            return;
+        }
+        input.getline(buffer, 200, '\n');
+    }
+
+    std::cout << "Jedi " << jediName << " doesn't exists!\n";
+    input.close();
+}
+
+void printJediFromPlanets(String planet1Name, String planet2Name)
+{
+    Vector<Jedi> jediFromPlanet1 = getJediFromPlanet(planet1Name);
+    Vector<Jedi> jediFromPlanet2 = getJediFromPlanet(planet2Name);
+
+    usi planet1JediCount = jediFromPlanet1.getSize();
+    usi planet2JediCount = jediFromPlanet2.getSize();
+
+    Vector<Jedi> allJedi;
+
+    for (usi i = 0; i < planet1JediCount + planet2JediCount; i++)
+    {
+        if(i < planet1JediCount)
+            allJedi.push_back(jediFromPlanet1[i]);
+        else allJedi.push_back(jediFromPlanet2[i-planet1JediCount]);
+    }
+
+    jediFromPlanet1.~Vector();
+    jediFromPlanet2.~Vector();
+
+    for (size_t i = 0; i < allJedi.getSize(); i++)
+        for (size_t j = i; j < allJedi.getSize(); j++)
+            if(strcmp(allJedi[i].getName(), allJedi[j].getName()) > 0)
+            {
+                Jedi temp(allJedi[i]);
+                allJedi[i] = allJedi[j];
+                allJedi[j] = temp; 
+            }
+
+    for (size_t i = 0; i < allJedi.getSize(); i++)
+        std::cout << allJedi[i];
+        
 }
 
 int main()
@@ -509,7 +582,12 @@ int main()
 
     //std::cout << get_most_used_saber_color("Earth Second");
 
-    //print("Earth Second");
+    //printPlanet("Earth Second");
+
+    //printJedi("Angelcho");
+
+    //printJediFromPlanets("Mars", "Earth Second");
+    
  
 }
 
