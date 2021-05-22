@@ -538,9 +538,6 @@ void printJediFromPlanets(String planet1Name, String planet2Name)
         else allJedi.push_back(jediFromPlanet2[i-planet1JediCount]);
     }
 
-    jediFromPlanet1.~Vector();
-    jediFromPlanet2.~Vector();
-
     for (size_t i = 0; i < allJedi.getSize(); i++)
         for (size_t j = i; j < allJedi.getSize(); j++)
             if(strcmp(allJedi[i].getName(), allJedi[j].getName()) > 0)
@@ -555,7 +552,7 @@ void printJediFromPlanets(String planet1Name, String planet2Name)
         
 }
 
-int main()
+int main1()
 {
     //add_planet("Earth Second");
     //add_planet("Mars");
@@ -587,7 +584,6 @@ int main()
     //printJedi("Angelcho");
 
     //printJediFromPlanets("Mars", "Earth Second");
-    
- 
+    return 0;
 }
 
