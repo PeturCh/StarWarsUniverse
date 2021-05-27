@@ -30,13 +30,14 @@ Vector<Jedi> getJediFromPlanet(String planetName)
         {
             if(normalizedName == first + 2)
             {
-                char nameFF[50], planetFF[50], colourFF[20];
+                char nameFF[50], colourFF[20];
+                String planetFF = first + 2;
                 usi rangFF, ageFF;
                 double powerFF;
                 while(true)
                 {
-                    input >> nameFF >> planetFF >> rangFF >> ageFF >> colourFF >> powerFF;
-                    if(nameFF[0] != '-')
+                    input >> nameFF >> rangFF >> ageFF >> colourFF >> powerFF;
+                    if(nameFF[0] != '-' && !input.eof())
                     {
                         Jedi j(nameFF, (Rang)rangFF, ageFF, colourFF, powerFF, planetFF);
                         jediFromPlanet.push_back(j);
@@ -60,15 +61,15 @@ bool jediExists(String jediName, String planetName = "")
 
     std::ifstream input("..\\Data\\new.txt");
     char nameFF[100];
-    char planetFF[100];
+    String planetFF;
     while(!input.eof())
     {   
         input >> nameFF;
         if (nameFF[0] == '-')
         {
+            planetFF = nameFF + 2;
             continue;
         }
-        input >> planetFF;
 
         if (jediNameNormalized == nameFF && (planetNameNormalized == planetFF || planetName == ""))
         {
@@ -111,6 +112,7 @@ void add_planet(String name)
     std::ofstream output("..\\Data\\new.txt", std::ios::app);
     output << "--" <<normalizeName(name) << '\n';
     output.close();
+    std::cout<<"Planet added successfuly! Planet name:  " << name << '\n';
 }
 
 void create_jedi(String planetName, String jediName, Rang rang, usi age, String saberColour, double power)
@@ -159,7 +161,7 @@ void create_jedi(String planetName, String jediName, Rang rang, usi age, String 
     remove("..\\Data\\new.txt");
     if(rename("..\\Data\\new2.txt", "..\\Data\\new.txt") == 0)
     {
-        std::cout<<"All changes are saved successfully in the file!\n";
+        std::cout<<"Jedi added successfuly! Jedi name:  " << jediName << '\n';
     }
 }
 
@@ -212,7 +214,7 @@ void remove_jedi(String jediName, String planetName)
     remove("..\\Data\\new.txt");
     if(rename("..\\Data\\new2.txt", "..\\Data\\new.txt") == 0)
     {
-        std::cout<<"All changes are saved successfully in the file!\n";
+        std::cout<<"Jedi " << jediName << " removed successfuly!\n";
     }
 }
  
@@ -230,7 +232,8 @@ void promote_jedi(String jediName, double multipl)
         return;
     }
     String normalizedName = normalizeName(jediName);
-    char nameFF[50], planetFF[50], colourFF[20];
+    char nameFF[50], colourFF[20];
+    String planetFF;
     usi rangFF, ageFF;
     double powerFF;
 
@@ -246,10 +249,11 @@ void promote_jedi(String jediName, double multipl)
         if(nameFF[0] == '-')
         {
             output << nameFF << '\n';
+            planetFF = nameFF + 2;
             continue;
         }
 
-        input >> planetFF >> rangFF >> ageFF >> colourFF >> powerFF;
+        input >> rangFF >> ageFF >> colourFF >> powerFF;
 
         if(normalizedName == nameFF)
         {
@@ -288,7 +292,8 @@ void demote_jedi(String jediName, double multipl)
         return;
     }
     String normalizedName = normalizeName(jediName);
-    char nameFF[50], planetFF[50], colourFF[20];
+    char nameFF[50], colourFF[20];
+    String planetFF;
     usi rangFF, ageFF;
     double powerFF;
 
@@ -304,10 +309,11 @@ void demote_jedi(String jediName, double multipl)
         if(nameFF[0] == '-')
         {
             output << nameFF << '\n';
+            planetFF = nameFF + 2;
             continue;
         }
 
-        input >> planetFF >> rangFF >> ageFF >> colourFF >> powerFF;
+        input >> rangFF >> ageFF >> colourFF >> powerFF;
 
         if(normalizedName == nameFF)
         {
@@ -403,6 +409,11 @@ String get_most_used_saber_color(String planetName, usi rank)
         }
     }
     
+    if(mostUsedColour.isEmpty())
+    {
+        std::cout<<"There is no jedi with this rank on planet "<< planetName << "\n";
+    }
+
     return mostUsedColour;
 }
 
@@ -452,6 +463,11 @@ String get_most_used_saber_color(String planetName)
         }
     }
 
+    if(mostUsedColour.isEmpty())
+    {
+        std::cout<<"There is no jedi with rank GRAND MASTER on planet "<< planetName << "\n";
+    }
+
     return mostUsedColour;
 }
 
@@ -478,14 +494,20 @@ void printPlanet(String planetName)
                     jediFromPlanet[j] = temp;
                 }
 
+    if (jediFromPlanet.isEmpty())
+    {
+        std::cout<<"There are not any jedi on this planet!\n";
+    }
+
     for (size_t i = 0; i < jediFromPlanet.getSize(); i++)
-        std::cout << jediFromPlanet[i];
+        jediFromPlanet[i].print();
 }
 
 void printJedi(String jediName)
 {
     String jediNameNormalized = normalizeName(jediName);
 
+    String planetFF;
     char nameFF[100];
     char buffer[200];
 
@@ -500,17 +522,18 @@ void printJedi(String jediName)
 
         if (nameFF[0] == '-')
         {
+            planetFF = nameFF + 2;
             continue;
         }
 
         if (jediNameNormalized == nameFF)
         {
-            char planetFF[50], colourFF[20];
+            char colourFF[20];
             usi rangFF, ageFF;
             double powerFF;
-            input >> planetFF >> rangFF >> ageFF >> colourFF >> powerFF;
+            input >> rangFF >> ageFF >> colourFF >> powerFF;
             Jedi j(nameFF, (Rang)rangFF, ageFF, colourFF, powerFF, planetFF);
-            std::cout << nameFF << " from planet " << planetFF << ", with rank " << (Rang)rangFF << ", aged " << ageFF << ", saber colour " << colourFF << ", power " << powerFF << "." <<'\n';
+            j.print();
             input.close();
             return;
         }
@@ -547,8 +570,13 @@ void printJediFromPlanets(String planet1Name, String planet2Name)
                 allJedi[j] = temp; 
             }
 
+    if (allJedi.isEmpty())
+    {
+        std::cout<<"There are not any jedi on these planets!\n";
+    }
+
     for (size_t i = 0; i < allJedi.getSize(); i++)
-        std::cout << allJedi[i];
+        allJedi[i].print();
         
 }
 
@@ -556,32 +584,40 @@ int main1()
 {
     //add_planet("Earth Second");
     //add_planet("Mars");
-    //add_planet("Jupiter ohohoh");
-    //add_planet("Mercury wowoow");
-
+    //add_planet("Jupiter o");
+    //add_planet("Mercury w");
+    //add_planet("Mars Bate");
+    //add_planet("Saturn Shh");
+//
+//
     //create_jedi("Earth Second", "Ango Ochite", (Rang)5, 24, "blue", 99.71);
     //create_jedi("Earth Second", "Peshko Beibe", (Rang)5, 19, "blue", 85.27);
-    //create_jedi("Earth Second", "Georgi", (Rang)6, 57, "blue", 85.27);
-    //create_jedi("Mars", "Ango Bango", (Rang)2, 18, "red", 59.12);
-    //create_jedi("Jupiter ohohoh", "Vesko", (Rang)4, 21, "green", 87.75);
-    //create_jedi("Jupiter ohohoh", "Angelcho", (Rang)4, 24, "bluee", 87.75);
-    //create_jedi("Mercury wowoow", "Gosho", (Rang)1, 8, "purple", 12.45);
+    //create_jedi("Earth Second", "Georgi", (Rang)6, 57, "blue", 39.27);
+    //create_jedi("Saturn Shh", "Georgito", (Rang)7, 57, "green", 25.27);
+    //create_jedi("Saturn Shh", "Georgidd", (Rang)8, 57, "red", 98.27);
+    //create_jedi("Saturn Shh", "Vanio", (Rang)3, 5, "yellow", 85.27);
+    //create_jedi("Mars", "Ango Bango", (Rang)2, 18, "red", 65.12);
+    //create_jedi("Mars", "Ango Ghh", (Rang)8, 25, "blue", 80.12);
+    //create_jedi("Mars Bate", "Peshko Marsa", (Rang)8, 18, "black", 65.12);
+    //create_jedi("Jupiter o", "Vesko", (Rang)4, 21, "green", 32.75);
+    //create_jedi("Jupiter o", "Angelcho", (Rang)4, 24, "bluee", 87.75);
+    //create_jedi("Mercury w", "Gosho", (Rang)1, 8, "purple", 12.45);
 
-    //promote_jedi("Georgi", 1.77);
+    //remove_jedi("Georgidd", "Saturn Shh");
 
-    //Jedi jj = get_strongest_jedi("Jupiter o");
+    //Jedi jj = get_strongest_jedi("Mercury_w");
     //std::cout<<jj << '\n';
 
-    //Jedi j(get_youngest_jedi("Jupiter o", 3));
+    //Jedi j(get_youngest_jedi("Saturn Shh", 5));
     //std::cout << j<< '\n';
 
-    //std::cout << get_most_used_saber_color("Jupiter o", 3);
+    //std::cout << get_most_used_saber_color("Saturn Shh", 5);
 
     //std::cout << get_most_used_saber_color("Earth Second");
 
     //printPlanet("Earth Second");
 
-    //printJedi("Angelcho");
+    //printJedi("Vanio");
 
     //printJediFromPlanets("Mars", "Earth Second");
     return 0;

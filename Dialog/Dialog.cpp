@@ -86,7 +86,7 @@ int main()
                 char jediName[50] = {'\0'};
                 double multipl;
                 std::cin>>jediName>>multipl;
-                remove_jedi(jediName, multipl);
+                promote_jedi(jediName, multipl);
             }
 
         else if(strcmp(command, "demote_jedi") == 0)
@@ -94,25 +94,32 @@ int main()
                 char jediName[50] = {'\0'};
                 double multipl;
                 std::cin>>jediName>>multipl;
-                remove_jedi(jediName, multipl);
+                demote_jedi(jediName, multipl);
             }
 
-        else if(strcmp(command, "get_strongest_jedi") == 0)
+        else if(strcmp(command, "get_strongest_jedi") == 0) 
             {
                 char planetName[50] = {'\0'};
                 std::cin>>planetName;
-                get_strongest_jedi(planetName);
+                Jedi strongest = get_strongest_jedi(planetName);
+                if(strongest.getName() == "None")
+                    std::cout<<"There are not any jedi on this planet!\n";
+                else strongest.print();
             }
 
-        else if(strcmp(command, "get_youngest_jedi") == 0)
+        else if(strcmp(command, "get_youngest_jedi") == 0) 
             {
                 char planetName[50] = {'\0'};
                 usi rank;
                 std::cin>>planetName>>rank;
-                get_youngest_jedi(planetName, rank);
+                Jedi youngest = get_youngest_jedi(planetName, rank);
+
+                if(youngest.getName() == "None")
+                    std::cout<<"There are not any jedi on this planet!\n";
+                else youngest.print();
             }
 
-        else if(strcmp(command, "get_most_used_saber_color") == 0)
+        else if(strcmp(command, "get_most_used_saber_color_byRank") == 0) 
             {
                 char planetName[50] = {'\0'};
                 usi rank;
@@ -120,7 +127,7 @@ int main()
                 get_most_used_saber_color(planetName, rank);
             }
 
-        else if(strcmp(command, "get_most_used_saber_color") == 0)
+        else if(strcmp(command, "get_most_used_saber_color") == 0) 
             {
                 char planetName[50] = {'\0'};
                 std::cin>>planetName;

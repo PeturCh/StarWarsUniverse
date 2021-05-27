@@ -21,6 +21,15 @@ class Jedi
     double power;
     String planetName;
 
+    String denormalizeName(String other)
+    {
+        for (size_t i = 0; i < other.getLength(); i++)
+        if (other[i] == '_')
+            other[i] = ' ';
+
+        return other; 
+    }
+
     public:
 
     Jedi() 
@@ -98,6 +107,34 @@ class Jedi
         return saber;
     }
 
+    void print()
+    {
+        String rankText;
+        switch (rang)
+        {
+        case 1: rankText = "YOUNGLING";
+            break;
+        case 2: rankText = "INITIATE";
+            break;
+        case 3: rankText = "PADAWAN";
+            break;
+        case 4: rankText = "KNIGHT ASPIRANT";
+            break;
+        case 5: rankText = "KNIGHT";
+            break;
+        case 6: rankText = "MASTER";
+            break;
+        case 7: rankText = "BATTLE MASTER";
+            break;
+        case 8: rankText = "GRAND MASTER";
+            break;
+        
+        default: 
+            break;
+        }
+        std::cout << denormalizeName(name) << ' ' << "rank: " << rankText << ", " << age << " years old," << ' ' << saberColour << " saber" << ' ' << "with " << power << " power, from " << denormalizeName(planetName)<<'\n';
+    }
+
     String getSaberColour2()
     {
         return saberColour;
@@ -122,7 +159,7 @@ class Jedi
     
 std::ostream& operator<<(std::ostream& out,  Jedi &j)
 {   
-    out << j.name << ' ' << j.planetName << ' ' << j.rang << ' ' << j.age << ' ' << j.saberColour << ' ' << j.power << '\n';
+    out << j.name << ' ' << j.rang << ' ' << j.age << ' ' << j.saberColour << ' ' << j.power << '\n';
     return out;
 }
 
