@@ -89,12 +89,42 @@ class Jedi
         {
             nameArr[i] = name[i];
         }
+        nameArr[name.getLength()] = '\0';
         return nameArr;
     }
 
     usi getRank()
     {
         return rang;
+    }
+
+    String getRankText(int add = 0)
+    {
+        String rankText;
+        switch (rang + add)
+        {
+        case 1: rankText = "YOUNGLING";
+            break;
+        case 2: rankText = "INITIATE";
+            break;
+        case 3: rankText = "PADAWAN";
+            break;
+        case 4: rankText = "KNIGHT ASPIRANT";
+            break;
+        case 5: rankText = "KNIGHT";
+            break;
+        case 6: rankText = "MASTER";
+            break;
+        case 7: rankText = "BATTLE MASTER";
+            break;
+        case 8: rankText = "GRAND MASTER";
+            break;
+        
+        default: 
+            break;
+        }
+
+        return rankText;
     }
 
     char* getSaberColour()
@@ -138,6 +168,11 @@ class Jedi
     String getSaberColour2()
     {
         return saberColour;
+    }
+
+    String getPlanet()
+    {
+        return planetName;
     }
 
     Jedi& operator=(const Jedi &other)

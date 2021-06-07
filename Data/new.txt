@@ -3,6 +3,7 @@ Georgi 7 57 blue 69.5079
 Peshko_Beibe 8 19 blue 85.27
 Ango_Ochite 5 24 blue 99.71
 --Mars
+Yoda 8 150 green 99999
 Ango_Bangolev 7 18 red 65.12
 Ango_Ghh 8 25 blue 80.12
 Ango_Bango 2 18 red 65.12
@@ -19,4 +20,6 @@ Peshkko 5 23 red 98.27
 Georgibe 8 36 red 98.27
 Koko 5 57 red 25.27
 Georgito 5 57 yellow 25.27
-
+--Nova
+Peshko_Nov 5 19 purple 68
+--Nova2

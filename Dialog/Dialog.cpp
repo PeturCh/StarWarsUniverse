@@ -25,14 +25,16 @@ void getHelp()
             <<"\n<planet name> + <planet name>  prints jedi from both planets\n";
 }
 
-//std::ifstream open(char *fileName)
-//{
-//    std::ifstream input(fileName);
-//    return nullptr;
-//}
+std::ifstream open(char *fileName)
+{
+    std::ifstream input(fileName);
+    return nullptr;
+}
 
 int main()
 {
+    bool opened = false;
+    Commands commands;
     char command[20] = {'\0'};
 
     do
@@ -41,8 +43,16 @@ int main()
         std::cout<<"\n> ";
         std::cin>>command;
         
+        if(strcmp(command, "exit") == 0)
+            break;
+        
         if(strcmp(command, "open") == 0)
-            std::cout<<"openCalled\n";
+        {   
+            char fileName[50];
+            std::cin>>fileName;
+            commands.open(fileName);
+            opened = true;
+        }
             
         else if(strcmp(command, "save") == 0)
             std::cout<<"saveCalled\n";
@@ -60,8 +70,7 @@ int main()
             {
                 char planetName[50];
                 std::cin>>planetName;
-                std::cout<<planetName;
-                add_planet(planetName);
+                commands.add_planet(planetName);
             }
 
         else if(strcmp(command, "create_jedi") == 0)
@@ -70,15 +79,15 @@ int main()
                 usi rank, age;
                 double power;
                 std::cin>>planetName>>jediName>>rank>>age>>saberColour>>power;
-                create_jedi(planetName,jediName,(Rang)rank,age,saberColour,power);
+                commands.create_jedi(planetName,jediName,(Rang)rank,age,saberColour,power);
             }
 
         else if(strcmp(command, "remove_jedi") == 0)
             {
                 char jediName[50] = {'\0'};
                 char planetName[50] = {'\0'};
-                std::cin>>planetName>>jediName;
-                remove_jedi(jediName, planetName);
+                std::cin>>jediName>>planetName;
+                commands.remove_jedi(jediName, planetName);
             }
 
         else if(strcmp(command, "promote_jedi") == 0)
@@ -86,7 +95,7 @@ int main()
                 char jediName[50] = {'\0'};
                 double multipl;
                 std::cin>>jediName>>multipl;
-                promote_jedi(jediName, multipl);
+                commands.promote_jedi(jediName, multipl);
             }
 
         else if(strcmp(command, "demote_jedi") == 0)
@@ -94,15 +103,15 @@ int main()
                 char jediName[50] = {'\0'};
                 double multipl;
                 std::cin>>jediName>>multipl;
-                demote_jedi(jediName, multipl);
+                commands.demote_jedi(jediName, multipl);
             }
 
         else if(strcmp(command, "get_strongest_jedi") == 0) 
             {
                 char planetName[50] = {'\0'};
                 std::cin>>planetName;
-                Jedi strongest = get_strongest_jedi(planetName);
-                if(strongest.getName() == "None")
+                Jedi strongest = commands.get_strongest_jedi(planetName);
+                if(strcmp(strongest.getName(), "None") == 0)
                     std::cout<<"There are not any jedi on this planet!\n";
                 else strongest.print();
             }
@@ -112,10 +121,10 @@ int main()
                 char planetName[50] = {'\0'};
                 usi rank;
                 std::cin>>planetName>>rank;
-                Jedi youngest = get_youngest_jedi(planetName, rank);
+                Jedi youngest = commands.get_youngest_jedi(planetName, rank);
 
-                if(youngest.getName() == "None")
-                    std::cout<<"There are not any jedi on this planet!\n";
+                if(strcmp(youngest.getName(), "None") == 0)
+                    std::cout<<"There are not any jedi satisfying this filter on this planet!\n";
                 else youngest.print();
             }
 
@@ -124,28 +133,43 @@ int main()
                 char planetName[50] = {'\0'};
                 usi rank;
                 std::cin>>planetName>>rank;
-                get_most_used_saber_color(planetName, rank);
+                std::cout<<"The most used color on planet " << planetName << " is ";
+                std::cout<<commands.get_most_used_saber_color(planetName, rank);
             }
 
         else if(strcmp(command, "get_most_used_saber_color") == 0) 
             {
                 char planetName[50] = {'\0'};
                 std::cin>>planetName;
-                get_most_used_saber_color(planetName);
+                std::cout<<"The most used color on planet " << planetName << " is ";
+                std::cout<<commands.get_most_used_saber_color(planetName);
             }
 
         else if(strcmp(command, "print_jedi") == 0)
             {
                 char jediName[50] = {'\0'};
                 std::cin>>jediName;
-                printJedi(jediName);
+                commands.printJedi(jediName);
             }
 
         else if(strcmp(command, "print_planet") == 0)
             {
                 char planetName[50] = {'\0'};
                 std::cin>>planetName;
-                printPlanet(planetName);
+                commands.printPlanet(planetName);
+            }
+
+        else if(strcmp(command, "order66") == 0)
+            {
+                commands.order66(); 
+            }
+
+        else if(strcmp(command, "duel") == 0)
+            {
+                char jedi1Name[50] = {'\0'};
+                char jedi2Name[50] = {'\0'};
+                std::cin>>jedi1Name>>jedi2Name;
+                commands.duel(jedi1Name,jedi2Name);
             }
 
         else 
@@ -155,7 +179,7 @@ int main()
             if(function == '+')
             {
                 std::cin>>plananetName2;
-                printJediFromPlanets(command, plananetName2);
+                commands.printJediFromPlanets(command, plananetName2);
             }
             std::cin.ignore(256, '\n');
         }
