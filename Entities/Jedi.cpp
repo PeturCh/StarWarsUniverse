@@ -1,68 +1,156 @@
 #pragma once
-#include <iostream>
-#include "..\Services\string.cpp"
-#include "..\Services\Vector.cpp"
+#include "Jedi.h"
 
-using usi = unsigned short int;
-
-enum Rang
+String Jedi::denormalizeName(String other)
 {
-    YOUNGLING = 1, INITIATE = 2, PADAWAN = 3, KNIGHT_ASPIRANT = 4, KNIGHT = 5, MASTER = 6, BATTLE_MASTER = 7, GRAND_MASTER = 8
-};
+    for (size_t i = 0; i < other.getLength(); i++)
+    if (other[i] == '_')
+        other[i] = ' ';
+    return other; 
+}
 
-class Jedi
+Jedi::Jedi() 
 {
-    private:
+    name = "None";
+    rang = (Rang)1;
+    age = 50000;
+    saberColour = "transperant";
+    power = 0;
+    planetName = "None";
+}
 
-    String name;
-    Rang rang;
-    usi age;
-    String saberColour;
-    double power;
-    String planetName;
-
-    String denormalizeName(String other)
-    {
-        for (size_t i = 0; i < other.getLength(); i++)
-        if (other[i] == '_')
-            other[i] = ' ';
-
-        return other; 
-    }
-
-    public:
-
-    Jedi() 
-    {
-        name = "None";
+Jedi::Jedi(const String &_name, const Rang &_rang, const usi &_age, const String &_saberColour, const double &_power, const String &_planetName)
+{
+    name = _name;
+    if(_rang > 8)
+        rang = (Rang)8;
+    else if(_rang < 1)
         rang = (Rang)1;
-        age = 50000;
-        saberColour = "transperant";
-        power = 0;
-        planetName = "None";
-    }
+    else rang = _rang;
+    age = _age;
+    saberColour = _saberColour;
     
-    Jedi(const String &_name, const Rang &_rang, const usi &_age, const String &_saberColour, const double &_power, const String &_planetName)
+    if(_power < 0)
+        power = 0;
+    else power = _power;
+    planetName = _planetName;
+}
+
+Jedi::Jedi(const Jedi &other)
+{
+    name = other.name;
+    rang = other.rang;
+    age = other.age;
+    saberColour = other.saberColour;
+    power = other.power;
+    planetName = other.planetName;
+}
+
+double Jedi::getPower()
+{
+    return power;
+}
+
+usi Jedi::getAge()
+{
+    return age;
+}
+
+char* Jedi::getName()
+{
+    char* nameArr = new char[name.getLength() + 1];
+    for (size_t i = 0; i < name.getLength(); i++)
     {
-        name = _name;
-
-        if(_rang > 8)
-            rang = (Rang)8;
-        else if(_rang < 1)
-            rang = (Rang)1;
-        else rang = _rang;
-
-        age = _age;
-        saberColour = _saberColour;
-        
-        if(_power < 0)
-            power = 0;
-        else power = _power;
-
-        planetName = _planetName;
+        nameArr[i] = name[i];
     }
+    nameArr[name.getLength()] = '\0';
+    return nameArr;
+}
 
-    Jedi(const Jedi &other)
+usi Jedi::getRank()
+{
+    return rang;
+}
+
+String Jedi::getRankText(int add)
+{
+    String rankText;
+    switch (rang + add)
+    {
+    case 1: rankText = "YOUNGLING";
+        break;
+    case 2: rankText = "INITIATE";
+        break;
+    case 3: rankText = "PADAWAN";
+        break;
+    case 4: rankText = "KNIGHT ASPIRANT";
+        break;
+    case 5: rankText = "KNIGHT";
+        break;
+    case 6: rankText = "MASTER";
+        break;
+    case 7: rankText = "BATTLE MASTER";
+        break;
+    case 8: rankText = "GRAND MASTER";
+        break;
+    
+    default: 
+        break;
+    }
+    return rankText;
+}
+
+char* Jedi::getSaberColour()
+{
+    char* saber = new char[saberColour.getLength() + 1];
+    for (size_t i = 0; i < saberColour.getLength(); i++)
+    {
+        saber[i] = saberColour[i];
+    }
+    return saber;
+}
+
+void Jedi::print()
+{
+    String rankText;
+    switch (rang)
+    {
+    case 1: rankText = "YOUNGLING";
+        break;
+    case 2: rankText = "INITIATE";
+        break;
+    case 3: rankText = "PADAWAN";
+        break;
+    case 4: rankText = "KNIGHT ASPIRANT";
+        break;
+    case 5: rankText = "KNIGHT";
+        break;
+    case 6: rankText = "MASTER";
+        break;
+    case 7: rankText = "BATTLE MASTER";
+        break;
+    case 8: rankText = "GRAND MASTER";
+        break;
+    
+    default: 
+        break;
+    }
+    std::cout << denormalizeName(name) << ' ' << "rank: " << rankText << ", " << age << " years old," << ' ' << saberColour << " saber" << ' ' << "with " << power << " power, from " << denormalizeName(planetName)<<'\n';
+}
+
+String Jedi::getSaberColour2()
+{
+    return saberColour;
+}
+
+String Jedi::getPlanet()
+{
+    return planetName;
+}
+
+Jedi& Jedi::operator=(const Jedi &other)
+{
+    if(this != &other)
     {
         name = other.name;
         rang = other.rang;
@@ -71,126 +159,8 @@ class Jedi
         power = other.power;
         planetName = other.planetName;
     }
-
-    double getPower()
-    {
-        return power;
-    }
-
-    usi getAge()
-    {
-        return age;
-    }
-
-    char* getName()
-    {
-        char* nameArr = new char[name.getLength() + 1];
-        for (size_t i = 0; i < name.getLength(); i++)
-        {
-            nameArr[i] = name[i];
-        }
-        nameArr[name.getLength()] = '\0';
-        return nameArr;
-    }
-
-    usi getRank()
-    {
-        return rang;
-    }
-
-    String getRankText(int add = 0)
-    {
-        String rankText;
-        switch (rang + add)
-        {
-        case 1: rankText = "YOUNGLING";
-            break;
-        case 2: rankText = "INITIATE";
-            break;
-        case 3: rankText = "PADAWAN";
-            break;
-        case 4: rankText = "KNIGHT ASPIRANT";
-            break;
-        case 5: rankText = "KNIGHT";
-            break;
-        case 6: rankText = "MASTER";
-            break;
-        case 7: rankText = "BATTLE MASTER";
-            break;
-        case 8: rankText = "GRAND MASTER";
-            break;
-        
-        default: 
-            break;
-        }
-
-        return rankText;
-    }
-
-    char* getSaberColour()
-    {
-        char* saber = new char[saberColour.getLength() + 1];
-        for (size_t i = 0; i < saberColour.getLength(); i++)
-        {
-            saber[i] = saberColour[i];
-        }
-        return saber;
-    }
-
-    void print()
-    {
-        String rankText;
-        switch (rang)
-        {
-        case 1: rankText = "YOUNGLING";
-            break;
-        case 2: rankText = "INITIATE";
-            break;
-        case 3: rankText = "PADAWAN";
-            break;
-        case 4: rankText = "KNIGHT ASPIRANT";
-            break;
-        case 5: rankText = "KNIGHT";
-            break;
-        case 6: rankText = "MASTER";
-            break;
-        case 7: rankText = "BATTLE MASTER";
-            break;
-        case 8: rankText = "GRAND MASTER";
-            break;
-        
-        default: 
-            break;
-        }
-        std::cout << denormalizeName(name) << ' ' << "rank: " << rankText << ", " << age << " years old," << ' ' << saberColour << " saber" << ' ' << "with " << power << " power, from " << denormalizeName(planetName)<<'\n';
-    }
-
-    String getSaberColour2()
-    {
-        return saberColour;
-    }
-
-    String getPlanet()
-    {
-        return planetName;
-    }
-
-    Jedi& operator=(const Jedi &other)
-    {
-        if(this != &other)
-        {
-            name = other.name;
-            rang = other.rang;
-            age = other.age;
-            saberColour = other.saberColour;
-            power = other.power;
-            planetName = other.planetName;
-        }
-        return *this;
-    }
-
-    friend std::ostream& operator<<(std::ostream& out, Jedi &j);
-};
+    return *this;
+}
     
 std::ostream& operator<<(std::ostream& out,  Jedi &j)
 {   

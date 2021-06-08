@@ -1,42 +1,30 @@
 #pragma once
-#include <iostream>
-#include "Jedi.cpp"
-#include "..\Services\string.cpp"
-#include "..\Services\Vector.cpp"
+#include "Planet.h"
 
-class Planet
+Planet::Planet(){}
+
+Planet::Planet(String _name)
 {
-    private:
-    String name;
-    Vector<Jedi> jedi;
+    name = _name;
+}
 
-    public:
-    Planet() {}
+Planet::Planet(const Planet &other)
+{
+    name = other.name;
+    jedi = other.jedi;
+}
 
-    Planet(String _name)
-    {
-        name = _name;
-    }
-
-    Planet(const Planet &other)
+Planet& Planet::operator=(const Planet &other)
+{
+    if(this != &other) 
     {
         name = other.name;
         jedi = other.jedi;
     }
+    return *this;
+}
 
-    Planet& operator=(const Planet &other)
-    {
-        if(this != &other) 
-        {
-            name = other.name;
-            jedi = other.jedi;
-        }
-        return *this;
-    }
-
-    String getName()
-    {
-        return name;
-    }
-
-};
+String Planet::getName()
+{
+    return name;
+}

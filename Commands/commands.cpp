@@ -1,69 +1,49 @@
 #pragma once
-#include <iostream>
-#include <fstream>
-#include <cstring>
-#include <filesystem>
-#include "..\Services\string.cpp"
-#include "..\Services\Dictionary.cpp"
-#include "..\Entities\Jedi.cpp"
-#include "..\Entities\Planet.cpp"
+#include "commands.h"
 
-class Commands
+Jedi Commands::getJedi(String jediName)
 {
-    private:
-    char fileName[100];
-
-    Jedi getJedi(String jediName)
-    {
-        String jediNameNormalized = normalizeName(jediName);
-
-        String planetFF;
-        char nameFF[100];
-        char buffer[200];
-
-        std::ifstream input("..\\Data\\new.txt");
-
-        while(!input.eof())
-        {   
-            input >> nameFF;
-
-            if(input.eof())
-                break;
-
-            if (nameFF[0] == '-')
-            {
-                planetFF = nameFF + 2;
-                continue;
-            }
-
-            if (jediNameNormalized == nameFF)
-            {
-                char colourFF[20];
-                usi rangFF, ageFF;
-                double powerFF;
-                input >> rangFF >> ageFF >> colourFF >> powerFF;
-                Jedi j(nameFF, (Rang)rangFF, ageFF, colourFF, powerFF, planetFF);
-                input.close();
-                return j;
-            }
-            input.getline(buffer, 200, '\n');
+    String jediNameNormalized = normalizeName(jediName);
+    String planetFF;
+    char nameFF[100];
+    char buffer[200];
+    std::ifstream input("..\\Data\\new.txt");
+    while(!input.eof())
+    {   
+        input >> nameFF;
+        if(input.eof())
+            break;
+        if (nameFF[0] == '-')
+        {
+            planetFF = nameFF + 2;
+            continue;
         }
-
-        std::cout << "Jedi " << jediName << " doesn't exists!\n";
-        input.close();
-        return Jedi();
+        if (jediNameNormalized == nameFF)
+        {
+            char colourFF[20];
+            usi rangFF, ageFF;
+            double powerFF;
+            input >> rangFF >> ageFF >> colourFF >> powerFF;
+            Jedi j(nameFF, (Rang)rangFF, ageFF, colourFF, powerFF, planetFF);
+            input.close();
+            return j;
+        }
+        input.getline(buffer, 200, '\n');
     }
+    std::cout << "Jedi " << jediName << " doesn't exists!\n";
+    input.close();
+    return Jedi();
+}
 
-    String normalizeName(String name)
-    {
-        for (size_t i = 0; i < name.getLength(); i++)
-            if (name[i] == ' ')
-                name[i] = '_';
+String Commands::normalizeName(String name)
+{
+    for (size_t i = 0; i < name.getLength(); i++)
+        if (name[i] == ' ')
+            name[i] = '_';
+    return name;    
+}
 
-        return name;    
-    }
-
-    Vector<Jedi> getJediFromPlanet(String planetName)
+Vector<Jedi> Commands::getJediFromPlanet(String planetName)
     {
         String normalizedName = normalizeName(planetName);
         std::ifstream input("..\\Data\\new.txt");
@@ -101,7 +81,7 @@ class Commands
         return jediFromPlanet;
     }
 
-    bool jediExists(String jediName, String planetName = "")
+bool Commands::jediExists(String jediName, String planetName)
     {
         String jediNameNormalized = normalizeName(jediName);
         String planetNameNormalized = normalizeName(planetName);
@@ -128,7 +108,7 @@ class Commands
         return false;
     }
 
-    bool planetExists(String name)
+bool Commands::planetExists(String name)
     {
         String normalizedName = normalizeName(name);
         std::ifstream input("..\\Data\\new.txt");
@@ -148,16 +128,14 @@ class Commands
         return false;
     }
 
-    public:
+Commands::Commands(){}
 
-    Commands(){}
+void Commands::open(char _fileName[])
+{
+    strcpy(fileName, _fileName);
+}
 
-    void open(char _fileName[])
-    {
-        strcpy(fileName, _fileName);
-    }
-
-    void add_planet(String name)
+void Commands::add_planet(String name)
     {
         if (planetExists(normalizeName(name)))
         {
@@ -171,57 +149,51 @@ class Commands
         std::cout<<"Planet added successfuly! Planet name:  " << name << '\n';
     }
 
-    void create_jedi(String planetName, String jediName, Rang rang, usi age, String saberColour, double power)
+void Commands::create_jedi(String planetName, String jediName, Rang rang, usi age, String saberColour, double power)
+{
+    if (!planetExists(normalizeName(planetName)))
     {
-        if (!planetExists(normalizeName(planetName)))
+        std::cout<<"The jedi wasn't created since there isn't such a planet! Planet name: "<< planetName <<'\n';
+        return;
+    }
+    if(jediExists(jediName, planetName))
+    {
+        std::cout<<"There is already a jedi called " << jediName << " on planet " << planetName << "!" << '\n';
+        return;
+    }
+    Jedi j(normalizeName(jediName), rang, age, saberColour, power, normalizeName(planetName));
+    std::ofstream output("..\\Data\\new.txt", std::ios::app);
+    std::ofstream output2("..\\Data\\new2.txt", std::ios::app);
+    std::ifstream input("..\\Data\\new.txt");
+    char nameFF[100];
+    while(!input.eof())
+    {
+        input.getline(nameFF, 100, '\n');
+        if (nameFF[0] == '-')
         {
-            std::cout<<"The jedi wasn't created since there isn't such a planet! Planet name: "<< planetName <<'\n';
-            return;
+            output2 << nameFF << '\n';
         }
-
-        if(jediExists(jediName, planetName))
+        if(nameFF[0] != '-')
         {
-            std::cout<<"There is already a jedi called " << jediName << " on planet " << planetName << "!" << '\n';
-            return;
+            output2 << nameFF << '\n';
+            continue;
         }
-
-        Jedi j(normalizeName(jediName), rang, age, saberColour, power, normalizeName(planetName));
-
-        std::ofstream output("..\\Data\\new.txt", std::ios::app);
-        std::ofstream output2("..\\Data\\new2.txt", std::ios::app);
-        std::ifstream input("..\\Data\\new.txt");
-        char nameFF[100];
-        while(!input.eof())
+        if (normalizeName(planetName) == nameFF + 2)
         {
-            input.getline(nameFF, 100, '\n');
-            if (nameFF[0] == '-')
-            {
-                output2 << nameFF << '\n';
-            }
-
-            if(nameFF[0] != '-')
-            {
-                output2 << nameFF << '\n';
-                continue;
-            }
-
-            if (normalizeName(planetName) == nameFF + 2)
-            {
-                output2 << j ;
-            }
-        }
-        output.close();
-        output2.close();
-        input.close();
-
-        remove("..\\Data\\new.txt");
-        if(rename("..\\Data\\new2.txt", "..\\Data\\new.txt") == 0)
-        {
-            std::cout<<"Jedi added successfuly! Jedi name:  " << jediName << '\n';
+            output2 << j ;
         }
     }
+    output.close();
+    output2.close();
+    input.close();
+    remove("..\\Data\\new.txt");
+    if(rename("..\\Data\\new2.txt", "..\\Data\\new.txt") == 0)
+    {
+        std::cout<<"Jedi added successfuly! Jedi name:  " << jediName << '\n';
+    }
+}
 
-    void remove_jedi(String jediName, String planetName)
+void Commands::remove_jedi(String jediName, String planetName)
     {
         if(!jediExists(jediName, planetName))
         {
@@ -273,8 +245,8 @@ class Commands
             std::cout<<"Jedi " << jediName << " removed successfuly!\n";
         }
     }
-    
-    void promote_jedi(String jediName, double multipl)
+
+void Commands::promote_jedi(String jediName, double multipl)
     {
         if(multipl <= 0)
         {
@@ -334,7 +306,7 @@ class Commands
         }
     }
 
-    void demote_jedi(String jediName, double multipl)
+void Commands::demote_jedi(String jediName, double multipl)
     {
         if(multipl <= 0)
         {
@@ -395,96 +367,91 @@ class Commands
 
     }
 
-    Jedi get_strongest_jedi(String planetName)
-    {
-        Jedi strongest;
-        if(planetExists(planetName))
-        {
-            Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);
-            for (usi i = 0; i < jediFromPlanet.getSize(); i++)
-            {
-                if(jediFromPlanet[i].getPower() > strongest.getPower())
-                    strongest = jediFromPlanet[i];
-            }
-        }
-        else
-            std::cout<<"There is not such planet!\n";
-
-        return strongest;
-    }
-
-    Jedi get_youngest_jedi(String planetName, usi rank)
-    {   
-        Jedi youngest;
-        if(planetExists(planetName))
-        {
-            Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);
- 
-            for (usi i = 0; i < jediFromPlanet.getSize(); i++)
-            {
-                if(jediFromPlanet[i].getAge() <= youngest.getAge() && jediFromPlanet[i].getRank() == rank)
-                {
-                    if (jediFromPlanet[i].getAge() == youngest.getAge())
-                    {
-                        if(strcmp(jediFromPlanet[i].getName(), youngest.getName()) < 0)
-                            youngest = jediFromPlanet[i];
-                        continue;
-                    }
-                    youngest = jediFromPlanet[i];
-                }
-            }
-        }
-        else
-            std::cout<<"There is not such planet!\n";
-        return youngest;
-    }
-
-    String get_most_used_saber_color(String planetName, usi rank)
+Jedi Commands::get_strongest_jedi(String planetName)
+{
+    Jedi strongest;
+    if(planetExists(planetName))
     {
         Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);
-        Vector<DictionaryPair<String,usi>> colours;
-        bool containsColour = false;
+        for (usi i = 0; i < jediFromPlanet.getSize(); i++)
+        {
+            if(jediFromPlanet[i].getPower() > strongest.getPower())
+                strongest = jediFromPlanet[i];
+        }
+    }
+    else
+        std::cout<<"There is not such planet!\n";
+    return strongest;
+}
+
+Jedi Commands::get_youngest_jedi(String planetName, usi rank)
+{   
+    Jedi youngest;
+    if(planetExists(planetName))
+    {
+        Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);
 
         for (usi i = 0; i < jediFromPlanet.getSize(); i++)
         {
-            if(jediFromPlanet[i].getRank() == rank)
+            if(jediFromPlanet[i].getAge() <= youngest.getAge() && jediFromPlanet[i].getRank() == rank)
             {
-                for (usi j = 0; j < colours.getSize(); j++)
+                if (jediFromPlanet[i].getAge() == youngest.getAge())
                 {
-                    if(jediFromPlanet[i].getSaberColour2() == colours[j].getKey())
-                    {
-                        colours[j].setValue(colours[j].getValue() + 1);
-                        containsColour = true;
-                    }
+                    if(strcmp(jediFromPlanet[i].getName(), youngest.getName()) < 0)
+                        youngest = jediFromPlanet[i];
+                    continue;
                 }
-                if (!containsColour)
-                {
-                    colours.push_back(DictionaryPair<String, usi>(jediFromPlanet[i].getSaberColour2(), 1));
-                }
-            }
-            containsColour = false;
-        }
-
-        usi mostOccurrences = 0;
-        String mostUsedColour;
-        for (usi i = 0; i < colours.getSize(); i++)
-        {
-            if(colours[i].getValue() > mostOccurrences)
-            {
-                mostUsedColour = colours[i].getKey();
-                mostOccurrences = colours[i].getValue();
+                youngest = jediFromPlanet[i];
             }
         }
-
-        if(mostUsedColour.isEmpty())
-        {
-            std::cout<<"There is no jedi with this rank on planet "<< planetName << "\n";
-        }
-
-        return mostUsedColour;
     }
+    else
+        std::cout<<"There is not such planet!\n";
+    return youngest;
+}
 
-    String get_most_used_saber_color(String planetName)
+String Commands::get_most_used_saber_color(String planetName, usi rank)
+{
+    Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);
+    Vector<DictionaryPair<String,usi>> colours;
+    bool containsColour = false;
+    for (usi i = 0; i < jediFromPlanet.getSize(); i++)
+    {
+        if(jediFromPlanet[i].getRank() == rank)
+        {
+            for (usi j = 0; j < colours.getSize(); j++)
+            {
+                if(jediFromPlanet[i].getSaberColour2() == colours[j].getKey())
+                {
+                    colours[j].setValue(colours[j].getValue() + 1);
+                    containsColour = true;
+                }
+            }
+            if (!containsColour)
+            {
+                colours.push_back(DictionaryPair<String, usi>(jediFromPlanet[i].getSaberColour2(), 1));
+            }
+        }
+        containsColour = false;
+    }
+    usi mostOccurrences = 0;
+    String mostUsedColour;
+    for (usi i = 0; i < colours.getSize(); i++)
+    {
+        if(colours[i].getValue() > mostOccurrences)
+        {
+            mostUsedColour = colours[i].getKey();
+            mostOccurrences = colours[i].getValue();
+        }
+    }
+    if(mostUsedColour.isEmpty())
+    {
+        std::cout<<"There is no jedi with this rank on planet "<< planetName << "\n";
+    }
+    return mostUsedColour;
+}
+
+String Commands::get_most_used_saber_color(String planetName)
     {
         std::ifstream input("..\\Data\\new.txt");
 
@@ -538,51 +505,47 @@ class Commands
         return mostUsedColour;
     }
 
-    void printPlanet(String planetName)
+void Commands::printPlanet(String planetName)
+{
+    if(!planetExists(planetName))
     {
-        if(!planetExists(planetName))
-        {
-            std::cout<<"There is not such planet!\n";
-            return;
-        }
-        Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);
-
-        for(usi i = 0; i < jediFromPlanet.getSize(); i++)
-            for (size_t j = i; j < jediFromPlanet.getSize(); j++)
-                if(jediFromPlanet[i].getRank() > jediFromPlanet[j].getRank())
+        std::cout<<"There is not such planet!\n";
+        return;
+    }
+    Vector<Jedi> jediFromPlanet = getJediFromPlanet(planetName);
+    for(usi i = 0; i < jediFromPlanet.getSize(); i++)
+        for (size_t j = i; j < jediFromPlanet.getSize(); j++)
+            if(jediFromPlanet[i].getRank() > jediFromPlanet[j].getRank())
+            {
+                Jedi temp(jediFromPlanet[i]);
+                jediFromPlanet[i] = jediFromPlanet[j];
+                jediFromPlanet[j] = temp;
+            }
+    for (usi i = 0; i < jediFromPlanet.getSize(); i++)
+        for (size_t j = i; j < jediFromPlanet.getSize(); j++)
+            if(jediFromPlanet[i].getRank() == jediFromPlanet[j].getRank()) //only if the rank is the same
+                if(std::strcmp(jediFromPlanet[i].getName(), jediFromPlanet[j].getName()) > 0) //only if the first jedi has alphabetically higher value
                 {
                     Jedi temp(jediFromPlanet[i]);
                     jediFromPlanet[i] = jediFromPlanet[j];
                     jediFromPlanet[j] = temp;
                 }
-
-        for (usi i = 0; i < jediFromPlanet.getSize(); i++)
-            for (size_t j = i; j < jediFromPlanet.getSize(); j++)
-                if(jediFromPlanet[i].getRank() == jediFromPlanet[j].getRank()) //only if the rank is the same
-                    if(std::strcmp(jediFromPlanet[i].getName(), jediFromPlanet[j].getName()) > 0) //only if the first jedi has alphabetically higher value
-                    {
-                        Jedi temp(jediFromPlanet[i]);
-                        jediFromPlanet[i] = jediFromPlanet[j];
-                        jediFromPlanet[j] = temp;
-                    }
-
-        if (jediFromPlanet.isEmpty())
-        {
-            std::cout<<"There are not any jedi on this planet!\n";
-        }
-
-        for (size_t i = 0; i < jediFromPlanet.getSize(); i++)
-            jediFromPlanet[i].print();
+    if (jediFromPlanet.isEmpty())
+    {
+        std::cout<<"There are not any jedi on this planet!\n";
     }
+    for (size_t i = 0; i < jediFromPlanet.getSize(); i++)
+        jediFromPlanet[i].print();
+}
 
-    void printJedi(String jediName)
+void Commands::printJedi(String jediName)
     {
         Jedi j = getJedi(jediName);
         if(j.getName() != "None")
             j.print();
     }
 
-    void printJediFromPlanets(String planet1Name, String planet2Name)
+void Commands::printJediFromPlanets(String planet1Name, String planet2Name)
     {
         Vector<Jedi> jediFromPlanet1 = getJediFromPlanet(planet1Name);
         Vector<Jedi> jediFromPlanet2 = getJediFromPlanet(planet2Name);
@@ -618,7 +581,7 @@ class Commands
 
     }
 
-    void duel(String jedi1Name, String jedi2Name)
+void Commands::duel(String jedi1Name, String jedi2Name)
     {
         Jedi j1 = getJedi(jedi1Name);
         Jedi j2 = getJedi(jedi2Name);
@@ -650,7 +613,7 @@ class Commands
         
     }
 
-    void order66()
+void Commands::order66()
     {
         Vector<Planet> planets;
         char line[50];
@@ -682,7 +645,6 @@ class Commands
             }
         }
     }
-};
 
 int main1()
 {
