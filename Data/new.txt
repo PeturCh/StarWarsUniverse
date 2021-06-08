@@ -3,13 +3,12 @@ Georgi 7 57 blue 69.5079
 Peshko_Beibe 8 19 blue 85.27
 Ango_Ochite 5 24 blue 99.71
 --Mars
+Lucho 7 21 red 99
 Yoda 8 150 green 99999
-Ango_Bangolev 7 18 red 65.12
-Ango_Ghh 8 25 blue 80.12
-Ango_Bango 2 18 red 65.12
+Princess_Leya 7 18 red 65.12
+Darth_Vader 8 25 blue 80.12
 --Jupiter_o
 Angelcho 4 24 bluee 87.75
-Vesko 4 21 green 32.75
 --Mercury_w
 Gosho 1 8 purple 12.45
 --Mars_Bate
@@ -23,3 +22,9 @@ Georgito 5 57 yellow 25.27
 --Nova
 Peshko_Nov 5 19 purple 68
 --Nova2
+--TestPl
+TestJedi 5 8 blue 87
+
+--Bate
+
+

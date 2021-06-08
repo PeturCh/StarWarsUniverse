@@ -27,7 +27,7 @@ class Jedi
 
     Jedi();
     
-    Jedi(const String &, const Rang &, const usi &_ge, const String &, const double &, const String &);
+    Jedi(const String &, const Rang &, const usi &, const String &, const double &, const String &);
 
     Jedi(const Jedi &other);
 

@@ -1,4 +1,58 @@
 #include "..\Commands\commands.cpp"
+#include <stdlib.h>
+#define DOCTEST_CONFIG_IMPLEMENT
+#include "..\doctest.h"
+
+TEST_CASE("String")
+{
+    String myStr("test");
+    CHECK(myStr.getLength()==4);
+    CHECK(myStr.isEmpty() == false);
+    String other("test2");
+    myStr.swap(other);
+    CHECK(myStr == "test2");
+    myStr.push_back('k');
+    CHECK(myStr.getLength()==6);
+    CHECK(myStr == "test2k");
+}
+
+TEST_CASE("Vector")
+{
+    Vector<int> v;
+    CHECK(v.getSize() == 0);
+    v.push_back(5);
+    v.push_back(6);
+    CHECK(v.isEmpty() == false);
+    CHECK(v.getSize() == 2);
+}
+
+TEST_CASE("Jedi")
+{
+    Jedi j("Pesho",(Rang)8,12,"blue",685,"Mars");
+    CHECK(j.getAge() == 12);
+    CHECK(strcmp(j.getName(), "Pesho") == 0);
+    CHECK(j.getPlanet() == "Mars");
+    CHECK(j.getPower() == 685);
+    CHECK(j.getRankText() == "GRAND MASTER");
+    CHECK(strcmp(j.getSaberColour(), "blue") == 0);
+}
+
+TEST_CASE("Planet")
+{
+    Planet p("Earth");
+    CHECK(p.getName() == "Earth");
+    Planet pl("Mars");
+    pl = p;
+    CHECK(pl.getName() == "Earth");
+}
+
+TEST_CASE("Commands")
+{
+    Commands c;
+    c.add_planet("TestPl");
+    c.create_jedi("TestPl", "TestJedi", (Rang)5, 8, "blue", 87);
+    CHECK(c.get_most_used_saber_color("TestPl", 5) == "blue");
+}
 
 void getHelp()
 {
@@ -10,7 +64,7 @@ void getHelp()
             <<"\nsaveas <file>	            saves the currently open file in <file>\n"
             <<"\nhelp			    prints this information\n"
             <<"\nexit			    exists the program\n"
-            <<"\n---------------------Jedi & Planets---------------------"
+            <<"\n---------------------Jedi & Planets---------------------\n"
             <<"add_planet <planet name>\n"
             <<"\ncreate_jedi  <planet name> <jedi name> <rank> <age> <saber colour> <power>\n"
             <<"\nremove_jedi  <jedi name> <planet name>\n"
@@ -33,10 +87,13 @@ std::ifstream open(char *fileName)
 
 int main()
 {
+    doctest::Context().run();
+
     bool opened = false;
     Commands commands;
     char command[20] = {'\0'};
 
+    std::cout<<"                                            STAR WARS UNIVERSE 0.1\n\n";
     do
     {
         std::fill(std::begin(command), std::end(command), '\0');
