@@ -34,7 +34,7 @@ TEST_CASE("Jedi")
     CHECK(j.getPlanet() == "Mars");
     CHECK(j.getPower() == 685);
     CHECK(j.getRankText() == "GRAND MASTER");
-    CHECK(strcmp(j.getSaberColour(), "blue") == 0);
+    CHECK(j.getSaberColour() == "blue");
 }
 
 TEST_CASE("Planet")
